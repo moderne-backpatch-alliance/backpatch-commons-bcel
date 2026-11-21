@@ -218,8 +218,15 @@ public class ConstantPool implements Cloneable, Node {
      * @throws IOException
      */
     public void dump( final DataOutputStream file ) throws IOException {
-        file.writeShort(constant_pool.length);
-        for (int i = 1; i < constant_pool.length; i++) {
+        /*
+         * Constants over the size of the constant pool shall not be written out.
+         * This is a redundant measure as the ConstantPoolGen should have already
+         * reported an error back in the situation.
+        */
+        final int size = Math.min(constant_pool.length, Const.MAX_CP_ENTRIES);
+
+        file.writeShort(size);
+        for (int i = 1; i < size; i++) {
             if (constant_pool[i] != null) {
                 constant_pool[i].dump(file);
             }
